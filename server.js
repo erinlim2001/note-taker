@@ -18,3 +18,24 @@ app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
+app.get("/api/notes", function(req, res) {
+    res.json(db);
+});
+
+app.post("/api/notes", function(req, res) {
+    let newNote = req.body;
+    db.push(newNote);
+    newNote.id = uuidv4();
+    updateDb();
+    return console.log("Added new note: "+newNote.title);
+});
+
+function updateDb() {
+    fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
+        if (err) throw err;
+        return true;
+    });
+}
+app.listen(PORT, () => {
+    console.log(`listening ${PORT}`);
+});
