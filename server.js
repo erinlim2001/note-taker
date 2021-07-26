@@ -22,16 +22,27 @@ app.get("/api/notes", function(req, res) {
     res.json(db);
 });
 
-app.post("/api/notes", (req, res) => {
-    console.log(`Hitting the API/Notes Route (with post request)`);
+app.post("/api/notes", function(req, res) {
+    // Receives a new note, adds it to db.json, then returns the new note
+    let newNote = req.body;
+    db.push(newNote);
+    newNote.id = uuidv4();
+    updateDb();
+    return console.log("Added new note: "+newNote.title);
+});
 
-        let newNote = req.body;
-        newNote.id = uuidv4();
-        db.push(newNote);
-        fs.writeFileSync("./db/db.json", JSON.stringify(db), (err) => {if(err) throw err;});
-        res.send(db)
-})
+// Retrieves a note with specific id
+app.get("/api/notes/:id", function(req,res) {
+    // display json for the notes array indices of the provided id
+    res.json(notes[req.params.id]);
+});
 
+function updateDb() {
+    fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
+        if (err) throw err;
+        return true;
+    });
+}
 app.listen(PORT, () => {
     console.log(`listening ${PORT}`);
 });
