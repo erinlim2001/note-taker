@@ -9,15 +9,6 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//display notes html
-app.get('/notes', (req, res) =>
-    res.sendFile(path.join(__dirname, '/public/notes.html'))
-);
-//display index html
-app.get('*', (req, res) =>
-    res.sendFile(path.join(__dirname, '/public/index.html'))
-);
-
 app.get("/api/notes", function(req, res) {
     res.json(db);
 });
@@ -27,7 +18,7 @@ app.post("/api/notes", function(req, res) {
     db.push(newNote);
     newNote.id = uuidv4();
     updateDb();
-    return console.log("Added new note: "+newNote.title);
+    res.send(db);
 });
 
 app.get("/api/notes/:id", function(req,res) {
@@ -35,11 +26,18 @@ app.get("/api/notes/:id", function(req,res) {
 });
 
 function updateDb() {
-    fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
+    fs.writeFile("db/db.json",JSON.stringify(db,'\t'),err => {
         if (err) throw err;
-        return true;
     });
 }
+
+app.get('/notes', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
+
+app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 app.listen(PORT, () => {
     console.log(`listening ${PORT}`);
 });
