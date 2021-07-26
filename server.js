@@ -30,6 +30,10 @@ app.post("/api/notes", function(req, res) {
     return console.log("Added new note: "+newNote.title);
 });
 
+app.get("/api/notes/:id", function(req,res) {
+    res.json(notes[req.params.id]);
+});
+
 function updateDb() {
     fs.writeFile("db/db.json",JSON.stringify(notes,'\t'),err => {
         if (err) throw err;
