@@ -35,6 +35,12 @@ app.get('/notes', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
+app.delete("/api/notes/:id", function(req, res) {
+    db.splice(req.params.id, 1);
+    updateDb();
+    res.send(db);
+});
+
 app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
